@@ -30,15 +30,31 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $attributes = $request->all();
+
+        $event = Event::create([
+            'name' => $attributes['name'],
+            'description' => $attributes['description'],
+            'type' => $attributes['type'],
+            'event_location' => $attributes['event_location']
+        ]);
+
+        $data = [
+            'message' => 'Event has been created',
+        ];
+
+        return response()->json($data, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Event $event)
+    public function show($id)
     {
-        //
+        $event = Event::where("id", $id)->first();
+
+        return response()->json($event);
     }
 
     /**
@@ -52,9 +68,22 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request, $id)
     {
-        //
+
+        $input = $request->all();
+
+        $event = Event::find($id)->update([
+            'name' => $input['name'],
+            'description' => $input['description'],
+            'type' => $input['type'],
+            'event_location' => $input['event_location']
+        ]);
+
+        return response()->json([
+            'result' => "Votre événement a bien été mis a jour"
+        ]);
+
     }
 
     /**
