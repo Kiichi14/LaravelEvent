@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,10 +19,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route de test pour controler la communication avec le serveur
 Route::get('/test', function() {
     return response()->json([
         'result' => 'hello test'
     ]);
 });
+
+// Route get de tous les événements en cours
+Route::get('/list', [EventController::class, 'index']);
 
 require __DIR__.'/auth.php';
