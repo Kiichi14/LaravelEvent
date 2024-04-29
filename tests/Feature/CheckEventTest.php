@@ -7,20 +7,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('should return a simple list of all event', function() {
-    $this->assertTrue(Schema::hasTable('events'));
 
-    $this->assertTrue(Schema::hasColumns('events', [
-        'id', 'name', 'description', 'type'
-    ]));
+    $eventsCount = 5;
 
-    $events = Event::factory()->count(5)->create();
+    $events = Event::factory()->count($eventsCount)->create();
 
-    $rows = Event::all();
+    $response = $this->get('/list')->assertStatus(200);
 
-    $response = $this->get('/list');
-
-    $response->assertStatus(200);
-
-    $response->assertJsonCount($rows->count());
+    $response->assertJsonCount($events->count($eventsCount));
 
 });
+
+
