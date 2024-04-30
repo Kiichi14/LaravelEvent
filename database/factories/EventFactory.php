@@ -18,11 +18,9 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
-            'type' => $this->faker->numberBetween(1, 3),
-            'event_location' => $this->faker->name(),
-            'event_date' => $this->faker->dateTimeBetween('now', '+2 years'),
+            'name' => fake()->name(),
+            'description' => fake()->text(),
+            'type' => fake()->numberBetween(1, 3),
         ];
     }
 }
