@@ -25,8 +25,13 @@ class Event extends Model
         'event_date'
     ];
 
-    public function location() : BelongsTo
+    // public function location() : BelongsTo
+    // {
+    //     return $this->belongsTo(Location::class, 'location_id', 'id');
+    // }
+
+    public function locations() : BelongsToMany
     {
-        return $this->belongsTo(Location::class, 'location_id', 'id');
+        return $this->belongsToMany(Location::class);
     }
 }

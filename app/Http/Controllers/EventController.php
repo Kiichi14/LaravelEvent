@@ -43,14 +43,12 @@ class EventController extends Controller
         // Formater la date au format Y-m-d
         $formattedDate = Carbon::createFromFormat('Y-m-d', $validatedData['event_date'])->toDateString();
 
-        //$attributes = $request->all();
-
         $event = Event::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'type' => $validatedData['type'],
             'event_location' => $validatedData['event_location'],
-            'event_date' => $formattedDate
+            'event_date' => $formattedDate,
         ]);
 
         $data = [
@@ -65,7 +63,7 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::where("id", $id)->first();
+        $event = Event::with('locations')->where("id", $id)->first();
 
         return response()->json($event);
     }
@@ -91,7 +89,7 @@ class EventController extends Controller
             'description' => $input['description'],
             'type' => $input['type'],
             'event_location' => $input['event_location'],
-            'event_date' => $input['event_date']
+            'event_date' => $input['event_date'],
         ]);
 
         return response()->json([

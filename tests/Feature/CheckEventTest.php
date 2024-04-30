@@ -21,7 +21,7 @@ test('should return a simple list of all event', function() {
 });
 
 test('should return a event detail', function() {
-
+    withoutExceptionHandling();
     $event = Event::factory()->create();
 
     $response = $this->get('/event/detail/'.$event->id)->assertStatus(200);
@@ -76,11 +76,17 @@ test('should update an event', function() {
     expect($updatedEvent->event_date)->toBe($newEventData['event_date']);
 });
 
-test('event should have a city and country', function() {
+test('event should have city and country', function() {
 
     $location = Location::factory()->create();
 
-    $event = Event::factory()->create(['location_id' => $location->id]);
+    $event = Event::factory()->create();
 
-    $this->assertInstanceOf(Location::class, $event->location);
+    $event->locations()->attach($location->id);
+
+    $location->events()->attach($event->id);
+
+    $this->assertTrue($event->locations->count() > 0);
+
+    $this->assertInstanceOf(Location::class, $event->locations()->first());
 });

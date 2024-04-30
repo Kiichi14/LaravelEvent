@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model
@@ -20,8 +21,13 @@ class Location extends Model
         'country'
     ];
 
-    public function events() : HasMany
+    // public function events() : HasMany
+    // {
+    //     return $this->hasMany(Event::class, 'id', 'location_id');
+    // }
+
+    public function events() : BelongsToMany
     {
-        return $this->hasMany(Event::class, 'id', 'location_id');
+        return $this->belongsToMany(Event::class);
     }
 }
