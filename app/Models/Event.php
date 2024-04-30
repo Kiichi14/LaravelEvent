@@ -25,6 +25,6 @@ class Event extends Model
 
     public function locations() : BelongsToMany
     {
-        return $this->belongsToMany(Location::class)->withPivot('theater', 'place_number');
+        return $this->belongsToMany(Location::class)->withPivot('theater', 'place_number', 'date');
     }
 }

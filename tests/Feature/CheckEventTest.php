@@ -42,13 +42,13 @@ test('should create an event', function() {
 
     $location = Location::factory()->create();
 
-    $data['event_date'] = $data['event_date']->format('Y-m-d');
-
     $data['event_city'] = $location->id;
 
     $data['theater'] = 'theater';
 
     $data['place_number'] = 250;
+
+    $data['date'] = "2024-10-22";
 
     $response = $this->post('event', $data);
 
@@ -58,8 +58,6 @@ test('should create an event', function() {
         'name' => $data['name'],
         'description' => $data['description'],
         'type' => $data['type'],
-        'event_location' => $data['event_location'],
-        'event_date' => $data['event_date']
     ]);
 
     $event = Event::where('name', $data['name'])->firstOrFail();
@@ -74,8 +72,6 @@ test('should update an event', function() {
         'name' => 'Nouveau nom d\'événement',
         'description' => 'Nouvelle description d\'événement',
         'type' => "concert",
-        'event_location' => 'Nouveau lieu d\'événement',
-        'event_date' => '2024-05-01'
     ];
 
     $response = $this->put("event/{$event->id}", $newEventData);
@@ -87,8 +83,6 @@ test('should update an event', function() {
     expect($updatedEvent->name)->toBe($newEventData['name']);
     expect($updatedEvent->description)->toBe($newEventData['description']);
     expect($updatedEvent->type)->toBe($newEventData['type']);
-    expect($updatedEvent->event_location)->toBe($newEventData['event_location']);
-    expect($updatedEvent->event_date)->toBe($newEventData['event_date']);
 });
 
 test('should delete an event', function() {
@@ -110,9 +104,12 @@ test('event should have city and country', function() {
 
     $place = 250;
 
+    $date = new \DateTime('now');
+
     $event->locations()->attach($location->id, attributes: [
         'theater' => $theater,
-        'place_number' => $place
+        'place_number' => $place,
+        'date' => $date
     ]);
 
     $this->assertTrue($event->locations->count() > 0);
@@ -127,12 +124,14 @@ test('should add a new appearance for event', function () {
 
     $theater = 'New Theater';
     $place = 123;
+    $newDate = "2024-10-22";
     $eventCityId = $location->id;
 
     $data = [
         'event_city' => $eventCityId,
         'theater' => $theater,
-        'place_number' => $place
+        'place_number' => $place,
+        'date' => $newDate
     ];
 
     $response = $this->post("event/newdate/{$event->id}", $data);
@@ -147,6 +146,7 @@ test('should add a new appearance for event', function () {
         'event_id' => $event->id,
         'location_id' => $eventCityId,
         'theater' => $theater,
-        'place_number' => $place
+        'place_number' => $place,
+        'date' => $newDate
     ]);
 });

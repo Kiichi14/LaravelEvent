@@ -36,27 +36,25 @@ class EventController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'type' => 'required',
-            'event_location' => 'required|string',
-            'event_date' => 'required|date_format:Y-m-d',
+            'date' => 'required|date_format:Y-m-d',
             'event_city' => 'required|integer',
             'theater' => 'required|string',
             'place_number' => 'required|integer'
         ]);
 
         // Formater la date au format Y-m-d
-        $formattedDate = Carbon::createFromFormat('Y-m-d', $validatedData['event_date'])->toDateString();
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $validatedData['date'])->toDateString();
 
         $event = Event::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'type' => $validatedData['type'],
-            'event_location' => $validatedData['event_location'],
-            'event_date' => $formattedDate,
         ]);
 
         $event->locations()->attach($validatedData['event_city'], [
             'theater' => $validatedData['theater'],
             'place_number' => $validatedData['place_number'],
+            'date' => $validatedData['date']
         ]);
 
         $data = [
@@ -96,8 +94,6 @@ class EventController extends Controller
             'name' => $input['name'],
             'description' => $input['description'],
             'type' => $input['type'],
-            'event_location' => $input['event_location'],
-            'event_date' => $input['event_date'],
         ]);
 
         return response()->json([
@@ -122,7 +118,8 @@ class EventController extends Controller
         $validatedData = $request->validate([
             'event_city' => 'required|integer',
             'theater' => 'required|string',
-            'place_number' => 'required|integer'
+            'place_number' => 'required|integer',
+            'date' => 'required|date_format:Y-m-d',
         ]);
 
         $event = Event::findOrFail($id);
@@ -130,6 +127,7 @@ class EventController extends Controller
         $event->locations()->attach($validatedData['event_city'], [
             'theater' => $validatedData['theater'],
             'place_number' => $validatedData['place_number'],
+            'date' => $validatedData['date']
         ]);
 
         $data = [
