@@ -28,5 +28,7 @@ Route::get('/test', function() {
 
 // Route de controle des événements
 Route::resource('/event', EventController::class);
+/* Ajout d'une nouvelle valuer a un événement existant */
+Route::post('event/newdate/{id}', [EventController::class, 'newAppearance']);
 
 require __DIR__.'/auth.php';

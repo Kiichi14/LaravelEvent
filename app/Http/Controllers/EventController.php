@@ -114,4 +114,28 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $event->delete();
     }
+
+    public function newAppearance(Request $request, $id)
+    {
+
+        // Validation des données entrantes
+        $validatedData = $request->validate([
+            'event_city' => 'required|integer',
+            'theater' => 'required|string',
+            'place_number' => 'required|integer'
+        ]);
+
+        $event = Event::findOrFail($id);
+
+        $event->locations()->attach($validatedData['event_city'], [
+            'theater' => $validatedData['theater'],
+            'place_number' => $validatedData['place_number'],
+        ]);
+
+        $data = [
+            'message' => 'your new event has been created',
+        ];
+
+        return response()->json($data, 201);
+    }
 }

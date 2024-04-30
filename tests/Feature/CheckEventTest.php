@@ -1,10 +1,12 @@
 <?php
 
 use App\Models\Event;
+use App\Models\EventLocation;
 use App\Models\Location;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutExceptionHandling;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 
 uses(RefreshDatabase::class);
 
@@ -116,4 +118,35 @@ test('event should have city and country', function() {
     $this->assertTrue($event->locations->count() > 0);
 
     $this->assertInstanceOf(Location::class, $event->locations()->first());
+});
+
+test('should add a new appearance for event', function () {
+    withoutExceptionHandling();
+    $location = Location::factory()->create();
+    $event = Event::factory()->create();
+
+    $theater = 'New Theater';
+    $place = 123;
+    $eventCityId = $location->id;
+
+    $data = [
+        'event_city' => $eventCityId,
+        'theater' => $theater,
+        'place_number' => $place
+    ];
+
+    $response = $this->post("event/newdate/{$event->id}", $data);
+
+    $response->assertStatus(201)
+             ->assertJson([
+                 'message' => 'your new event has been created'
+             ]);
+
+    // Vérifier que la nouvelle apparition a été ajoutée avec succès
+    $this->assertDatabaseHas('event_location', [
+        'event_id' => $event->id,
+        'location_id' => $eventCityId,
+        'theater' => $theater,
+        'place_number' => $place
+    ]);
 });
