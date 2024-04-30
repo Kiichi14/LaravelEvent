@@ -10,11 +10,13 @@ uses(RefreshDatabase::class);
 
 test('should return a simple list of all event', function() {
 
+    withoutExceptionHandling();
+
     $eventsCount = 5;
 
     $events = Event::factory()->count($eventsCount)->create();
 
-    $response = $this->get('/event')->assertStatus(200);
+    $response = $this->get('event')->assertStatus(200);
 
     $response->assertJsonCount($events->count($eventsCount));
 
@@ -24,7 +26,7 @@ test('should return a event detail', function() {
     withoutExceptionHandling();
     $event = Event::factory()->create();
 
-    $response = $this->get('/event/detail/'.$event->id)->assertStatus(200);
+    $response = $this->get('event/'.$event->id)->assertStatus(200);
 
     $eventDetails = $response->json();
 
@@ -42,7 +44,11 @@ test('should create an event', function() {
 
     $data['event_city'] = $location->id;
 
-    $response = $this->post('/event/create', $data);
+    $data['theater'] = 'theater';
+
+    $data['place_number'] = 250;
+
+    $response = $this->post('event', $data);
 
     $response->assertStatus(201);
 
@@ -70,7 +76,7 @@ test('should update an event', function() {
         'event_date' => '2024-05-01'
     ];
 
-    $response = $this->put("/event/update/{$event->id}", $newEventData);
+    $response = $this->put("event/{$event->id}", $newEventData);
 
     $response->assertStatus(200);
 
@@ -87,7 +93,7 @@ test('should delete an event', function() {
 
     $event = Event::factory()->create();
 
-    $response = $this->delete("/event/delete/{$event->id}")->assertStatus(200);
+    $response = $this->delete("event/{$event->id}")->assertStatus(200);
 
     $this->assertDatabaseCount('events', 0);
 });
@@ -98,9 +104,14 @@ test('event should have city and country', function() {
 
     $event = Event::factory()->create();
 
-    $event->locations()->attach($location->id);
+    $theater = 'Some Theater';
 
-    $location->events()->attach($event->id);
+    $place = 250;
+
+    $event->locations()->attach($location->id, attributes: [
+        'theater' => $theater,
+        'place_number' => $place
+    ]);
 
     $this->assertTrue($event->locations->count() > 0);
 

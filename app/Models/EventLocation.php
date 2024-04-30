@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class EventLocation extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'theater',
+        'place_number'
+    ];
 }

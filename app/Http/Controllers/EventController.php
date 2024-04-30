@@ -13,7 +13,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::all();
+        $events = Event::with('locations')->get();
 
         return response()->json($events);
     }
@@ -38,7 +38,9 @@ class EventController extends Controller
             'type' => 'required',
             'event_location' => 'required|string',
             'event_date' => 'required|date_format:Y-m-d',
-            'event_city' => 'required|integer'
+            'event_city' => 'required|integer',
+            'theater' => 'required|string',
+            'place_number' => 'required|integer'
         ]);
 
         // Formater la date au format Y-m-d
@@ -53,7 +55,8 @@ class EventController extends Controller
         ]);
 
         $event->locations()->attach($validatedData['event_city'], [
-            'event_id' => $event->id,
+            'theater' => $validatedData['theater'],
+            'place_number' => $validatedData['place_number'],
         ]);
 
         $data = [

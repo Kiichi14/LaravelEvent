@@ -26,19 +26,7 @@ Route::get('/test', function() {
     ]);
 });
 
-// Route get de tous les événements en cours
-Route::get('/event', [EventController::class, 'index']);
-
-// Route get d'un événements en particulier
-Route::get('/event/detail/{id}', [EventController::class, 'show']);
-
-// Route post d'un événement
-Route::post('/event/create', [EventController::class, 'store']);
-
-// Route de mis a jour d'un evenement
-Route::put('/event/update/{id}', [EventController::class, 'update']);
-
-// Route de suppression d'un événement
-Route::delete('/event/delete/{id}', [EventController::class, 'destroy']);
+// Route de controle des événements
+Route::resource('/event', EventController::class);
 
 require __DIR__.'/auth.php';
