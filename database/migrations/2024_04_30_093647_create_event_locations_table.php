@@ -22,6 +22,7 @@ return new class extends Migration
 
             $table->string('theater');
             $table->integer('place_number');
+            $table->date('date');
 
             $table->index(['event_id', 'location_id']);
         });
