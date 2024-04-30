@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Event;
-use Illuminate\Support\Facades\Schema;
+use App\Models\Location;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutExceptionHandling;
@@ -74,4 +74,13 @@ test('should update an event', function() {
     expect($updatedEvent->type)->toBe($newEventData['type']);
     expect($updatedEvent->event_location)->toBe($newEventData['event_location']);
     expect($updatedEvent->event_date)->toBe($newEventData['event_date']);
+});
+
+test('event should have a city and country', function() {
+
+    $location = Location::factory()->create();
+
+    $event = Event::factory()->create(['location_id' => $location->id]);
+
+    $this->assertInstanceOf(Location::class, $event->location);
 });
