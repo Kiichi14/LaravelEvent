@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class EventFactory extends Factory
             'description' => $this->faker->text(),
             'type' => $this->faker->numberBetween(1, 3),
             'event_location' => $this->faker->name(),
-            'event_date' => $this->faker->dateTimeBetween('now', '+2 years')
+            'event_date' => $this->faker->dateTimeBetween('now', '+2 years'),
         ];
     }
 }

@@ -36,7 +36,11 @@ test('should create an event', function() {
 
     $data = Event::factory()->raw();
 
+    $location = Location::factory()->create();
+
     $data['event_date'] = $data['event_date']->format('Y-m-d');
+
+    $data['event_city'] = $location->id;
 
     $response = $this->post('/event/create', $data);
 
@@ -49,6 +53,9 @@ test('should create an event', function() {
         'event_location' => $data['event_location'],
         'event_date' => $data['event_date']
     ]);
+
+    $event = Event::where('name', $data['name'])->firstOrFail();
+    $this->assertTrue($event->locations->contains($location->id));
 });
 
 test('should update an event', function() {
@@ -74,6 +81,15 @@ test('should update an event', function() {
     expect($updatedEvent->type)->toBe($newEventData['type']);
     expect($updatedEvent->event_location)->toBe($newEventData['event_location']);
     expect($updatedEvent->event_date)->toBe($newEventData['event_date']);
+});
+
+test('should delete an event', function() {
+
+    $event = Event::factory()->create();
+
+    $response = $this->delete("/event/delete/{$event->id}")->assertStatus(200);
+
+    $this->assertDatabaseCount('events', 0);
 });
 
 test('event should have city and country', function() {

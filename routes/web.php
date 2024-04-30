@@ -38,4 +38,7 @@ Route::post('/event/create', [EventController::class, 'store']);
 // Route de mis a jour d'un evenement
 Route::put('/event/update/{id}', [EventController::class, 'update']);
 
+// Route de suppression d'un événement
+Route::delete('/event/delete/{id}', [EventController::class, 'destroy']);
+
 require __DIR__.'/auth.php';

@@ -38,6 +38,7 @@ class EventController extends Controller
             'type' => 'required',
             'event_location' => 'required|string',
             'event_date' => 'required|date_format:Y-m-d',
+            'event_city' => 'required|integer'
         ]);
 
         // Formater la date au format Y-m-d
@@ -49,6 +50,10 @@ class EventController extends Controller
             'type' => $validatedData['type'],
             'event_location' => $validatedData['event_location'],
             'event_date' => $formattedDate,
+        ]);
+
+        $event->locations()->attach($validatedData['event_city'], [
+            'event_id' => $event->id,
         ]);
 
         $data = [
@@ -101,8 +106,9 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy($id)
     {
-        //
+        $event = Event::findOrFail($id);
+        $event->delete();
     }
 }
