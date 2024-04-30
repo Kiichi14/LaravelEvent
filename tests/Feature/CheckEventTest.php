@@ -36,6 +36,8 @@ test('should create an event', function() {
 
     $data = Event::factory()->raw();
 
+    $data['event_date'] = $data['event_date']->format('Y-m-d');
+
     $response = $this->post('/event/create', $data);
 
     $response->assertStatus(201);
@@ -44,7 +46,8 @@ test('should create an event', function() {
         'name' => $data['name'],
         'description' => $data['description'],
         'type' => $data['type'],
-        'event_location' => $data['event_location']
+        'event_location' => $data['event_location'],
+        'event_date' => $data['event_date']
     ]);
 });
 
@@ -57,6 +60,7 @@ test('should update an event', function() {
         'description' => 'Nouvelle description d\'événement',
         'type' => "concert",
         'event_location' => 'Nouveau lieu d\'événement',
+        'event_date' => '2024-05-01'
     ];
 
     $response = $this->put("/event/update/{$event->id}", $newEventData);
@@ -69,4 +73,5 @@ test('should update an event', function() {
     expect($updatedEvent->description)->toBe($newEventData['description']);
     expect($updatedEvent->type)->toBe($newEventData['type']);
     expect($updatedEvent->event_location)->toBe($newEventData['event_location']);
+    expect($updatedEvent->event_date)->toBe($newEventData['event_date']);
 });

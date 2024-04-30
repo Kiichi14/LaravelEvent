@@ -18,6 +18,7 @@ class Event extends Model
         'name',
         'description',
         'type',
-        'event_location'
+        'event_location',
+        'event_date'
     ];
 }

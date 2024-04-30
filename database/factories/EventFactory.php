@@ -20,7 +20,8 @@ class EventFactory extends Factory
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
             'type' => $this->faker->numberBetween(1, 3),
-            'event_location' => $this->faker->name()
+            'event_location' => $this->faker->name(),
+            'event_date' => $this->faker->dateTimeBetween('now', '+2 years')
         ];
     }
 }

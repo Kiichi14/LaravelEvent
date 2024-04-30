@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text("description");
             $table->enum("type", ['concert', 'stand-up', 'théatre']);
             $table->string('event_location');
+            $table->date('event_date');
         });
     }
 

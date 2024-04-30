@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -30,14 +31,26 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        // Validation des données entrantes
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'type' => 'required',
+            'event_location' => 'required|string',
+            'event_date' => 'required|date_format:Y-m-d',
+        ]);
 
-        $attributes = $request->all();
+        // Formater la date au format Y-m-d
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $validatedData['event_date'])->toDateString();
+
+        //$attributes = $request->all();
 
         $event = Event::create([
-            'name' => $attributes['name'],
-            'description' => $attributes['description'],
-            'type' => $attributes['type'],
-            'event_location' => $attributes['event_location']
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'type' => $validatedData['type'],
+            'event_location' => $validatedData['event_location'],
+            'event_date' => $formattedDate
         ]);
 
         $data = [
@@ -77,7 +90,8 @@ class EventController extends Controller
             'name' => $input['name'],
             'description' => $input['description'],
             'type' => $input['type'],
-            'event_location' => $input['event_location']
+            'event_location' => $input['event_location'],
+            'event_date' => $input['event_date']
         ]);
 
         return response()->json([
