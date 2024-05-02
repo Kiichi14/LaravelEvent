@@ -153,8 +153,8 @@ test('should filter events by city or type', function() {
     withoutExceptionHandling();
     $locationA = Location::factory()->create(['city' => 'Paris']);
     $locationB = Location::factory()->create(['city' => 'Barcelone']);
-    $eventOfTypeA = Event::factory()->create(['type' => 'concert', 'location_id' => $locationA->id]);
-    $eventOfTypeB = Event::factory()->create(['type' => 'stand-up', 'location_id' => $locationB->id]);
+    $eventOfTypeA = Event::factory()->create(['type' => 'concert']);
+    $eventOfTypeB = Event::factory()->create(['type' => 'stand-up']);
 
     $fakeTheater = "Fake theater";
     $fakePlace = 240;
