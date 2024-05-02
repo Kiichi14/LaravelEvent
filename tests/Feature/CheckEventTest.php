@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Event;
-use App\Models\EventLocation;
 use App\Models\Location;
 
 use function Pest\Laravel\withoutExceptionHandling;
@@ -141,7 +140,6 @@ test('should add a new appearance for event', function () {
                  'message' => 'your new event has been created'
              ]);
 
-    // Vérifier que la nouvelle apparition a été ajoutée avec succès
     $this->assertDatabaseHas('event_location', [
         'event_id' => $event->id,
         'location_id' => $eventCityId,
@@ -149,4 +147,45 @@ test('should add a new appearance for event', function () {
         'place_number' => $place,
         'date' => $newDate
     ]);
+});
+
+test('should filter events by city or type', function() {
+    withoutExceptionHandling();
+    $locationA = Location::factory()->create(['city' => 'Paris']);
+    $locationB = Location::factory()->create(['city' => 'Barcelone']);
+    $eventOfTypeA = Event::factory()->create(['type' => 'concert', 'location_id' => $locationA->id]);
+    $eventOfTypeB = Event::factory()->create(['type' => 'stand-up', 'location_id' => $locationB->id]);
+
+    $fakeTheater = "Fake theater";
+    $fakePlace = 240;
+    $fakeDate = "2024-10-22";
+
+    $eventOfTypeA->locations()->attach($locationA->id, attributes: [
+        'theater' => $fakeTheater,
+        'place_number' => $fakePlace,
+        'date' => $fakeDate
+    ]);
+
+    $eventOfTypeB->locations()->attach($locationB->id, attributes: [
+        'theater' => $fakeTheater,
+        'place_number' => $fakePlace,
+        'date' => $fakeDate
+    ]);
+
+    $responseType = $this->get('filter?type=concert&city=')->assertStatus(200);
+
+    $responseType->assertSee($eventOfTypeA->type);
+    $responseType->assertDontSee($eventOfTypeB->type);
+
+    $responseCity = $this->get('filter?type=&city=Paris')->assertStatus(200);
+
+    $responseCity->assertSee($locationA->city);
+    $responseCity->assertDontSee($locationB->city);
+
+    $responseAll = $this->get('filter?type=concert&city=Paris')->assertStatus(200);
+
+    $responseAll->assertSee($locationA->city);
+    $responseType->assertSee($eventOfTypeA->type);
+    $responseAll->assertDontSee($locationB->city);
+    $responseType->assertDontSee($eventOfTypeB->type);
 });

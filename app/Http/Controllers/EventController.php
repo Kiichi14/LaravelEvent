@@ -136,4 +136,32 @@ class EventController extends Controller
 
         return response()->json($data, 201);
     }
+
+    public function filterEvents(Request $request) {
+
+        $type = $request->input('type');
+        $city = $request->input('city');
+
+        switch (true) {
+            case $type !== null && $city === null:
+                $events = Event::with('locations')->where('type', $type)->get();
+                return response()->json($events);
+                break;
+            case $type === null && $city !== null:
+                $events = Event::with(['locations' => function ($query) use ($city) {
+                    $query->where('city', $city);
+                }])
+                ->get();
+                return response()->json($events);
+                break;
+            case $type !== null && $city !== null:
+                $events = Event::with(['locations' => function ($query) use ($city) {
+                    $query->where('city', $city);
+                }])
+                ->where('type', $type)
+                ->get();
+                return response()->json($events);
+                break;
+        }
+    }
 }

@@ -19,8 +19,6 @@ class Event extends Model
         'name',
         'description',
         'type',
-        'event_location',
-        'event_date'
     ];
 
     public function locations() : BelongsToMany

@@ -27,8 +27,10 @@ Route::get('/test', function() {
 });
 
 // Route de controle des événements
-Route::resource('/event', EventController::class);
+Route::resource('event', EventController::class);
 /* Ajout d'une nouvelle valuer a un événement existant */
 Route::post('event/newdate/{id}', [EventController::class, 'newAppearance']);
+/* Route de filtre des événements */
+Route::get('filter', [EventController::class, 'filterEvents']);
 
 require __DIR__.'/auth.php';
