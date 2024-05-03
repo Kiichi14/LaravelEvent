@@ -22,8 +22,6 @@ beforeEach(function () {
 
 test('a user can comment an event', function() {
 
-    withoutExceptionHandling();
-
     $user = $this->userFactory->create();
     $location = $this->locationFactory->create();
     $event = $this->eventFactory->create();
@@ -73,6 +71,8 @@ test('a guest cannot comment an event', function() {
 });
 
 test('should get the comment with an event', function() {
+
+    withoutExceptionHandling();
 
     $user = $this->userFactory->create();
     $location = $this->locationFactory->create();
