@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\Comment;
-use App\Models\Event;
 use Database\Factories\CommentFactory;
 use Database\Factories\EventFactory;
 use Database\Factories\LocationFactory;
+use App\Models\Comment;
 
 use Database\Factories\UserFactory;
 use function Pest\Laravel\withoutExceptionHandling;

@@ -42,8 +42,15 @@ class EventController extends Controller
             'place_number' => 'required|integer'
         ]);
 
+        $todayDate = Carbon::now();
         // Formater la date au format Y-m-d
         $formattedDate = Carbon::createFromFormat('Y-m-d', $validatedData['date'])->toDateString();
+
+        if($formattedDate < $todayDate->format('Y-m-d')) {
+            return response()->json([
+                'result' => 'la date ne peut etre inférieur a la date actuelle'
+            ], 422);
+        }
 
         $event = Event::create([
             'name' => $validatedData['name'],
@@ -70,8 +77,6 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::with('locations', 'comments.user')->where("id", $id)->first();
-
-        //dd($event);
 
         return response()->json($event);
     }

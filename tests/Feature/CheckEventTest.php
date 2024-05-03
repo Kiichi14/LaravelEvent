@@ -2,6 +2,8 @@
 
 use App\Models\Event;
 use App\Models\Location;
+use Database\Factories\EventFactory;
+use Database\Factories\LocationFactory;
 
 use function Pest\Laravel\withoutExceptionHandling;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,13 +11,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('should return a simple list of all event', function() {
+beforeEach(function () {
+    $this->eventFactory = new EventFactory();
+    $this->locationFactory = new LocationFactory();
+});
 
-    withoutExceptionHandling();
+test('should return a simple list of all event', function() {
 
     $eventsCount = 5;
 
-    $events = Event::factory()->count($eventsCount)->create();
+    $events = $this->eventFactory->count($eventsCount)->create();
 
     $response = $this->get('event')->assertStatus(200);
 
@@ -24,8 +29,7 @@ test('should return a simple list of all event', function() {
 });
 
 test('should return a event detail', function() {
-    withoutExceptionHandling();
-    $event = Event::factory()->create();
+    $event = $this->eventFactory->create();
 
     $response = $this->get('event/'.$event->id)->assertStatus(200);
 
@@ -34,12 +38,13 @@ test('should return a event detail', function() {
     $this->assertEquals($event->id, $eventDetails['id']);
 });
 
-test('should create an event', function() {
+test('should create an event', function(string $date) {
+
     withoutExceptionHandling();
 
-    $data = Event::factory()->raw();
+    $data = $this->eventFactory->raw();
 
-    $location = Location::factory()->create();
+    $location = $this->locationFactory->create();
 
     $data['event_city'] = $location->id;
 
@@ -47,25 +52,34 @@ test('should create an event', function() {
 
     $data['place_number'] = 250;
 
-    $data['date'] = "2024-10-22";
+    $data['date'] = $date;
+
+    $newDate = new DateTime('now');
 
     $response = $this->post('event', $data);
 
-    $response->assertStatus(201);
+    if($date < $newDate->format('Y-m-d')) {
+        $response->assertStatus(422);
+    } else {
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('events', [
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'type' => $data['type'],
+        ]);
 
-    $this->assertDatabaseHas('events', [
-        'name' => $data['name'],
-        'description' => $data['description'],
-        'type' => $data['type'],
-    ]);
-
-    $event = Event::where('name', $data['name'])->firstOrFail();
-    $this->assertTrue($event->locations->contains($location->id));
-});
+        $event = Event::where('name', $data['name'])->firstOrFail();
+        $this->assertTrue($event->locations->contains($location->id));
+    }
+})->with([
+    "2023-10-14",
+    "2025-10-14",
+    "2026-10-14",
+    "2012-10-14"
+]);
 
 test('should update an event', function() {
-    withoutExceptionHandling();
-    $event = Event::factory()->create();
+    $event = $this->eventFactory->create();
 
     $newEventData = [
         'name' => 'Nouveau nom d\'événement',
@@ -86,7 +100,7 @@ test('should update an event', function() {
 
 test('should delete an event', function() {
 
-    $event = Event::factory()->create();
+    $event = $this->eventFactory->create();
 
     $response = $this->delete("event/{$event->id}")->assertStatus(200);
 
@@ -95,9 +109,9 @@ test('should delete an event', function() {
 
 test('event should have city and country', function() {
 
-    $location = Location::factory()->create();
+    $location = $this->locationFactory->create();
 
-    $event = Event::factory()->create();
+    $event = $this->eventFactory->create();
 
     $theater = 'Some Theater';
 
@@ -117,9 +131,8 @@ test('event should have city and country', function() {
 });
 
 test('should add a new appearance for event', function () {
-    withoutExceptionHandling();
-    $location = Location::factory()->create();
-    $event = Event::factory()->create();
+    $location = $this->locationFactory->create();
+    $event = $this->eventFactory->create();
 
     $theater = 'New Theater';
     $place = 123;
@@ -150,11 +163,10 @@ test('should add a new appearance for event', function () {
 });
 
 test('should filter events by city or type', function() {
-    withoutExceptionHandling();
-    $locationA = Location::factory()->create(['city' => 'Paris']);
-    $locationB = Location::factory()->create(['city' => 'Barcelone']);
-    $eventOfTypeA = Event::factory()->create(['type' => 'concert']);
-    $eventOfTypeB = Event::factory()->create(['type' => 'stand-up']);
+    $locationA = $this->locationFactory->create(['city' => 'Paris']);
+    $locationB = $this->locationFactory->create(['city' => 'Barcelone']);
+    $eventOfTypeA = $this->eventFactory->create(['type' => 'concert']);
+    $eventOfTypeB = $this->eventFactory->create(['type' => 'stand-up']);
 
     $fakeTheater = "Fake theater";
     $fakePlace = 240;
