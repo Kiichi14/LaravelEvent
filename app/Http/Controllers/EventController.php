@@ -69,7 +69,9 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::with('locations')->where("id", $id)->first();
+        $event = Event::with('locations', 'comments')->where("id", $id)->first();
+
+        //dd($event);
 
         return response()->json($event);
     }
